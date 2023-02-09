@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class PhotoService {
@@ -38,6 +36,7 @@ public class PhotoService {
 
     public LoadPhoto downloadPhoto(String id) throws IOException {
         GridFSFile gridFSFile = template.findOne(new Query(Criteria.where("_id").is(id)));
+        System.out.println(gridFSFile);
         LoadPhoto loadPhoto = new LoadPhoto();
         if(gridFSFile != null && gridFSFile.getMetadata() != null) {
             loadPhoto.setPhotoName(gridFSFile.getFilename());
@@ -51,12 +50,14 @@ public class PhotoService {
         template.delete(new Query(Criteria.where("_id").is(id)));
     }
 
-    public List<GridFSFile> get() throws IOException {
-        GridFSFindIterable result = template.find(new Query(Criteria.where("length").gte(0)));
-        List<GridFSFile> listOb = new ArrayList<>();
-        //
-        result.forEach(x -> listOb.add(x));//
-        System.out.println(listOb.size());
-        return listOb;
+    public GridFSFindIterable get() throws IOException {
+        GridFSFindIterable result = template.find(new Query(Criteria.where("_id").exists(true)));
+//        List<GridFSFile> listOb = new ArrayList<>();
+//        //
+//        result.forEach(x -> listOb.add(x));//
+//        System.out.println(listOb.size());
+//        return listOb;
+        return result;
     }
+
 }
